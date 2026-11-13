@@ -24,6 +24,7 @@ export function Footer() {
             </a>
           </p>
           <p><a href={`mailto:${site.supportEmail}`} className="hover:text-white">{site.supportEmail}</a></p>
+          <p><Link href="/privacy" className="hover:text-white">Privacy policy</Link></p>
         </div>
       </div>
       <div className="border-t border-white/10">
