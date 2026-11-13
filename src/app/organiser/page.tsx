@@ -9,6 +9,14 @@ export const metadata: Metadata = { title: "My events", robots: { index: false }
 
 type Row = { id: string; title: string; slug: string; status: string; starts_at: string; sold: number; revenue: number; capacity: number };
 
+function ScanIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default async function Dashboard() {
   const user = await requireUser();
   const events = await q<Row>`
@@ -39,8 +47,8 @@ export default async function Dashboard() {
       ) : (
         <ul className="mt-8 space-y-3">
           {events.map((e) => (
-            <li key={e.id}>
-              <Link href={`/organiser/events/${e.id}`} className="card flex flex-wrap items-center justify-between gap-4 p-5 hover:shadow-md">
+            <li key={e.id} className="card flex flex-wrap items-center gap-3 p-3 sm:flex-nowrap sm:p-4">
+              <Link href={`/organiser/events/${e.id}`} className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-4 rounded-md p-2 hover:bg-zinc-50">
                 <div>
                   <p className="font-bold">{e.title}</p>
                   <p className="text-sm text-zinc-600">{eventDate(e.starts_at)}</p>
@@ -53,6 +61,11 @@ export default async function Dashboard() {
                   </span>
                 </div>
               </Link>
+              {e.status === "published" && (
+                <Link href={`/organiser/events/${e.id}/scan`} className="btn-primary w-full shrink-0 sm:w-auto">
+                  <ScanIcon /> Admit guests
+                </Link>
+              )}
             </li>
           ))}
         </ul>

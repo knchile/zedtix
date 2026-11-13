@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { q } from "@/lib/db";
 import { displayPhone, eventDate, kwacha } from "@/lib/format";
 import { site } from "@/lib/config";
-import { addTickets, gateLookup, setPublished } from "../actions";
+import { addTickets, setPublished } from "../actions";
 
 export const metadata: Metadata = { title: "Event sales", robots: { index: false } };
 
@@ -81,15 +81,18 @@ export default async function EventAdmin({ params }: { params: Promise<{ id: str
         </div>
       </section>
 
-      <section className="card mt-6 p-5">
-        <h2 className="font-black">At the door</h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          Scan a ticket QR with your phone camera while logged in here, or type the ticket code.
-        </p>
-        <form action={gateLookup} className="mt-3 flex gap-2">
-          <input className="input font-mono uppercase" name="code" placeholder="TICKET CODE" autoCapitalize="characters" />
-          <button className="btn-dark shrink-0">Check</button>
-        </form>
+      <section className="mt-6 overflow-hidden rounded-lg bg-night-900 text-white">
+        <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div>
+            <p className="eyebrow text-sun-300">At the door</p>
+            <p className="mt-1 font-display text-2xl font-extrabold">{checkedIn} of {sold} guests in</p>
+            <p className="mt-1 text-sm text-white/75">Opens your camera. Scan each ticket: green means admit, orange means already used.</p>
+          </div>
+          <Link href={`/organiser/events/${ev.id}/scan`} className="btn-accent shrink-0 px-8 py-4 text-lg">
+            Admit guests
+          </Link>
+        </div>
+        <div className="flag-rule" aria-hidden="true" />
       </section>
 
       <section className="mt-6">
