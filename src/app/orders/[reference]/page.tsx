@@ -75,7 +75,7 @@ export default async function OrderPage({ params }: { params: Promise<{ referenc
       {order.status === "paid" && (
         <>
           <div className="mt-6 rounded-2xl bg-green-50 p-4 text-green-900">
-            <p className="font-bold">Payment received. You&apos;re in, {order.buyer_name.split(" ")[0]}!</p>
+            <p className="font-bold">{order.total === 0 ? "Booked." : "Payment received."} You&apos;re in, {order.buyer_name.split(" ")[0]}!</p>
             <p className="mt-1 text-sm">
               Show the QR code at the door. Save this page or send it to yourself on WhatsApp so you can find it later.
             </p>

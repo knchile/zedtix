@@ -36,14 +36,15 @@ export async function createEvent(_p: EventFormState, form: FormData): Promise<E
   if (startsAt.getTime() < Date.now()) return { error: "The event date must be in the future." };
 
   const names = form.getAll("ticketName").map(String);
-  const prices = form.getAll("ticketPrice").map(Number);
+  const rawPrices = form.getAll("ticketPrice").map((v) => String(v).trim());
+  const prices = rawPrices.map(Number);
   const qtys = form.getAll("ticketQty").map(Number);
   const tickets = names
-    .map((name, i) => ({ name: name.trim(), price: Math.round(prices[i]), quantity: Math.round(qtys[i]) }))
+    .map((name, i) => ({ name: name.trim(), price: rawPrices[i] === "" ? NaN : Math.round(prices[i]), quantity: Math.round(qtys[i]) }))
     .filter((t) => t.name);
   if (tickets.length === 0) return { error: "Add at least one ticket type, for example Ordinary or VIP." };
   for (const t of tickets) {
-    if (!(t.price >= 1)) return { error: `Set a price for "${t.name}".` };
+    if (!(t.price >= 0)) return { error: `Set a price for "${t.name}". Type 0 for a free ticket.` };
     if (!(t.quantity >= 1)) return { error: `Set how many "${t.name}" tickets are available.` };
   }
 

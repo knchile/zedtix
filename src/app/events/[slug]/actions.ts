@@ -6,7 +6,7 @@ import { q } from "@/lib/db";
 import { MAX_PER_ORDER, bookingFee } from "@/lib/config";
 import { normalisePhone } from "@/lib/format";
 import { collect } from "@/lib/lipila";
-import { callbackUrl, expireStaleOrders, markFailed, newReference, reserve } from "@/lib/orders";
+import { callbackUrl, expireStaleOrders, markFailed, markPaid, newReference, reserve } from "@/lib/orders";
 
 export type BuyState = { error?: string };
 
@@ -59,6 +59,11 @@ export async function createOrder(_prev: BuyState, form: FormData): Promise<BuyS
     RETURNING id`)[0];
   for (const l of lines) {
     await q`INSERT INTO order_items (order_id, ticket_type_id, qty, unit_price) VALUES (${order.id}, ${l.ticketTypeId}, ${l.qty}, ${l.price})`;
+  }
+
+  if (total === 0) {
+    await markPaid(reference, "FREE");
+    redirect(`/orders/${reference}`);
   }
 
   let failed: string | null = null;

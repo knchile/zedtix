@@ -38,7 +38,7 @@ export function BuyForm({ eventId, tickets, feePercent }: { eventId: string; tic
               <div>
                 <p className="font-bold">{t.name}</p>
                 <p className="text-sm text-zinc-600">
-                  K{t.price.toLocaleString()} {soldOut ? <span className="font-semibold text-brand-600">· Sold out</span> : t.available <= 20 ? `· ${t.available} left` : ""}
+                  {t.price === 0 ? "Free" : `K${t.price.toLocaleString()}`} {soldOut ? <span className="font-semibold text-brand-600">· Sold out</span> : t.available <= 20 ? `· ${t.available} left` : ""}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -62,9 +62,11 @@ export function BuyForm({ eventId, tickets, feePercent }: { eventId: string; tic
               <input className="input" id="name" name="name" required autoComplete="name" />
             </div>
             <div>
-              <label className="label" htmlFor="phone">Mobile money number</label>
+              <label className="label" htmlFor="phone">{subtotal === 0 ? "Phone number" : "Mobile money number"}</label>
               <input className="input" id="phone" name="phone" required inputMode="tel" autoComplete="tel" placeholder="097 123 4567" />
-              <p className="mt-1 text-xs text-zinc-500">Airtel, MTN or Zamtel. You&apos;ll get a prompt on this phone to approve the payment.</p>
+              <p className="mt-1 text-xs text-zinc-500">
+                {subtotal === 0 ? "So the organiser can reach you about the event." : "Airtel, MTN or Zamtel. You'll get a prompt on this phone to approve the payment."}
+              </p>
             </div>
             <div>
               <label className="label" htmlFor="email">Email (optional)</label>
@@ -72,18 +74,24 @@ export function BuyForm({ eventId, tickets, feePercent }: { eventId: string; tic
             </div>
           </div>
 
-          <dl className="space-y-1 rounded-xl bg-zinc-50 p-4 text-sm">
+          {subtotal > 0 && <dl className="space-y-1 rounded-xl bg-zinc-50 p-4 text-sm">
             <div className="flex justify-between"><dt>Tickets ({count})</dt><dd>K{subtotal.toLocaleString()}</dd></div>
             <div className="flex justify-between"><dt>Booking fee</dt><dd>K{fee.toLocaleString()}</dd></div>
             <div className="flex justify-between border-t border-zinc-200 pt-2 text-base font-black"><dt>Total</dt><dd>K{(subtotal + fee).toLocaleString()}</dd></div>
-          </dl>
+          </dl>}
         </>
       )}
 
       {state.error && <p role="alert" className="alert-error">{state.error}</p>}
 
       <button type="submit" className="btn-primary w-full" disabled={count === 0 || pending}>
-        {pending ? "Sending payment prompt…" : count === 0 ? "Choose your tickets" : `Pay K${(subtotal + fee).toLocaleString()} with mobile money`}
+        {pending
+          ? subtotal === 0 ? "Getting your tickets…" : "Sending payment prompt…"
+          : count === 0
+            ? "Choose your tickets"
+            : subtotal === 0
+              ? `Get ${count} free ticket${count > 1 ? "s" : ""}`
+              : `Pay K${(subtotal + fee).toLocaleString()} with mobile money`}
       </button>
     </form>
   );

@@ -43,7 +43,7 @@ export function EventCard({ e }: { e: EventSummary }) {
             {part(d, { weekday: "short", hour: "2-digit", minute: "2-digit" })} · {e.venue}, {e.city}
           </p>
           <p className="mt-2 text-sm font-semibold text-zinc-900">
-            {e.sold_out ? "Sold out" : e.min_price != null ? `From ${kwacha(e.min_price)}` : "Tickets soon"}
+            {e.sold_out ? "Sold out" : e.min_price != null ? (e.min_price === 0 ? "Free" : `From ${kwacha(e.min_price)}`) : "Tickets soon"}
           </p>
         </div>
       </div>

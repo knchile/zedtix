@@ -31,13 +31,15 @@ CREATE TABLE IF NOT EXISTS ticket_types (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id     uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE,
   name         text NOT NULL,
-  price        integer NOT NULL CHECK (price >= 1),      -- whole kwacha
+  price        integer NOT NULL CHECK (price >= 0),      -- whole kwacha, 0 = free
   quantity     integer NOT NULL CHECK (quantity >= 1),
   reserved     integer NOT NULL DEFAULT 0,               -- paid + held for pending payments
   sort         integer NOT NULL DEFAULT 0,
   CHECK (reserved <= quantity)
 );
 CREATE INDEX IF NOT EXISTS ticket_types_event_idx ON ticket_types (event_id);
+ALTER TABLE ticket_types DROP CONSTRAINT IF EXISTS ticket_types_price_check;
+ALTER TABLE ticket_types ADD CONSTRAINT ticket_types_price_check CHECK (price >= 0);
 
 CREATE TABLE IF NOT EXISTS orders (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),

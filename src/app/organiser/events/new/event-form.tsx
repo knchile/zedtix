@@ -125,12 +125,12 @@ export function EventForm({ uploads }: { uploads: boolean }) {
 
       <section className="card p-5 sm:p-6">
         <h2 className="text-lg font-black">Tickets</h2>
-        <p className="text-sm text-zinc-600">Price in kwacha. Buyers pay the booking fee on top.</p>
+        <p className="text-sm text-zinc-600">Price in kwacha. Type 0 for a free ticket. Buyers pay the booking fee on top of paid tickets.</p>
         <div className="mt-4 space-y-3">
           {rows.map((r, i) => (
             <div key={r.key} className="grid grid-cols-[1fr_6rem_6rem] gap-2">
               <input className="input" name="ticketName" placeholder={i === 0 ? "Ordinary" : i === 1 ? "VIP" : "Ticket name"} aria-label="Ticket name" />
-              <input className="input" name="ticketPrice" type="number" min={1} inputMode="numeric" placeholder="K price" aria-label="Price in kwacha" />
+              <input className="input" name="ticketPrice" type="number" min={0} inputMode="numeric" placeholder="K price" aria-label="Price in kwacha" />
               <input className="input" name="ticketQty" type="number" min={1} inputMode="numeric" placeholder="How many" aria-label="Number available" />
             </div>
           ))}
