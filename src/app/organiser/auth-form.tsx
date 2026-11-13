@@ -31,7 +31,7 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
           autoComplete={mode === "login" ? "current-password" : "new-password"} />
       </div>
       {next && <input type="hidden" name="next" value={next} />}
-      {state.error && <p role="alert" className="rounded-lg bg-brand-50 p-3 text-sm font-semibold text-brand-700">{state.error}</p>}
+      {state.error && <p role="alert" className="alert-error">{state.error}</p>}
       <button className="btn-primary w-full" disabled={pending}>
         {pending ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
       </button>

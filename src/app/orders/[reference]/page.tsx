@@ -90,15 +90,26 @@ export default async function OrderPage({ params }: { params: Promise<{ referenc
           </div>
           <ul className="mt-6 space-y-5">
             {tickets.map((t, i) => (
-              <li key={t.code} className="card overflow-hidden">
-                <div className="flex items-center justify-between bg-night-950 px-5 py-3 text-white">
-                  <span className="font-bold">{t.type}</span>
-                  <span className="text-sm text-white/70">Ticket {i + 1} of {tickets.length}</span>
+              <li key={t.code} className="overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-zinc-200">
+                <div className="flex items-center justify-between bg-night-900 px-5 py-3 text-white">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/brand/zedtix-logo-white.svg" alt="ZedTix" className="h-5 w-auto" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/70">Ticket {i + 1} of {tickets.length}</span>
                 </div>
-                <div className="flex flex-col items-center p-5">
+                <div className="flag-rule" aria-hidden="true" />
+                <div className="px-5 pt-4">
+                  <p className="eyebrow text-brand-700">{t.type}</p>
+                  <p className="mt-1 font-display text-lg font-extrabold leading-snug">{order.title}</p>
+                  <p className="text-sm text-zinc-600">{eventDate(order.starts_at)} · {order.venue}</p>
+                </div>
+                <div className="relative my-4 border-t-2 border-dashed border-zinc-200">
+                  <span className="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-page" aria-hidden="true" />
+                  <span className="absolute -right-3 -top-3 h-6 w-6 rounded-full bg-page" aria-hidden="true" />
+                </div>
+                <div className="flex flex-col items-center px-5 pb-5">
                   <QR value={`${site.url}/t/${t.code}`} />
                   <p className="mt-3 font-mono text-xl font-bold tracking-[0.2em]">{t.code}</p>
-                  {t.checked_in_at && <p className="mt-1 text-sm font-semibold text-brand-600">Already used</p>}
+                  {t.checked_in_at && <p className="mt-1 text-sm font-semibold text-red-700">Already used</p>}
                 </div>
               </li>
             ))}

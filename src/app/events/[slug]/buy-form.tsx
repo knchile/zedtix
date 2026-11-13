@@ -80,7 +80,7 @@ export function BuyForm({ eventId, tickets, feePercent }: { eventId: string; tic
         </>
       )}
 
-      {state.error && <p role="alert" className="rounded-lg bg-brand-50 p-3 text-sm font-semibold text-brand-700">{state.error}</p>}
+      {state.error && <p role="alert" className="alert-error">{state.error}</p>}
 
       <button type="submit" className="btn-primary w-full" disabled={count === 0 || pending}>
         {pending ? "Sending payment prompt…" : count === 0 ? "Choose your tickets" : `Pay K${(subtotal + fee).toLocaleString()} with mobile money`}

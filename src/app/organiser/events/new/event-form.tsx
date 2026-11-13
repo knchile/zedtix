@@ -119,7 +119,7 @@ export function EventForm({ uploads }: { uploads: boolean }) {
               )}
             </>
           )}
-          {uploadError && <p className="mt-2 text-sm font-semibold text-brand-700">{uploadError}</p>}
+          {uploadError && <p className="mt-2 text-sm font-semibold text-red-700">{uploadError}</p>}
         </div>
       </section>
 
@@ -147,7 +147,7 @@ export function EventForm({ uploads }: { uploads: boolean }) {
         Put tickets on sale now
       </label>
 
-      {state.error && <p role="alert" className="rounded-lg bg-brand-50 p-3 text-sm font-semibold text-brand-700">{state.error}</p>}
+      {state.error && <p role="alert" className="alert-error">{state.error}</p>}
       <button className="btn-primary w-full" disabled={pending || uploading}>
         {pending ? "Creating…" : "Create event"}
       </button>

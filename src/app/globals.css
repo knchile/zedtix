@@ -1,16 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #fff1f3;
-  --color-brand-100: #ffe0e5;
-  --color-brand-500: #f43f5e;
-  --color-brand-600: #e11d48;
-  --color-brand-700: #be123c;
-  --color-night-900: #14111f;
-  --color-night-950: #0c0a14;
-  --color-sun-300: #fcd34d;
-  --color-sun-400: #fbbf24;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Zambia flag, tuned for screens: green field, eagle orange, red and black stripes */
+  --color-brand-50: #eef7ea;
+  --color-brand-100: #d6edcc;
+  --color-brand-500: #1e9a00;
+  --color-brand-600: #157a00;
+  --color-brand-700: #0f5f00;
+  --color-night-800: #0f4a2e;
+  --color-night-900: #0b3b24;
+  --color-night-950: #072818;
+  --color-sun-100: #fff1e0;
+  --color-sun-300: #ffb45c;
+  --color-sun-400: #ef7d00;
+  --color-sun-700: #a85400;
+  --color-flag-red: #de2010;
+  --color-flag-black: #0a0d0b;
+  --color-flag-orange: #ef7d00;
+  --color-page: #f4f6f4;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -18,12 +27,22 @@ html {
 }
 
 body {
-  background: #fafafa;
-  color: #18181b;
+  background: var(--color-page);
+  color: #0a0d0b;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+@utility flag-rule {
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-flag-red) 0 33.33%, var(--color-flag-black) 33.33% 66.66%, var(--color-flag-orange) 66.66% 100%);
 }
 
 @utility input {
-  @apply block w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 text-base text-zinc-900 placeholder:text-zinc-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100;
+  @apply block w-full rounded-md border border-zinc-300 bg-white px-3.5 py-3 text-base text-zinc-900 placeholder:text-zinc-400 focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-100;
 }
 
 @utility label {
@@ -31,11 +50,15 @@ body {
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-base font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-base font-bold tracking-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sun-400 disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 @utility btn-primary {
   @apply btn bg-brand-600 text-white hover:bg-brand-700;
+}
+
+@utility btn-accent {
+  @apply btn bg-sun-400 text-flag-black hover:bg-sun-300;
 }
 
 @utility btn-dark {
@@ -43,9 +66,17 @@ body {
 }
 
 @utility btn-ghost {
-  @apply btn border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50;
+  @apply btn border border-zinc-300 bg-white text-zinc-900 hover:border-zinc-400 hover:bg-zinc-50;
 }
 
 @utility card {
-  @apply rounded-2xl border border-zinc-200 bg-white;
+  @apply rounded-lg border border-zinc-200 bg-white;
+}
+
+@utility alert-error {
+  @apply rounded-md border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-800;
+}
+
+@utility eyebrow {
+  @apply text-xs font-bold uppercase tracking-[0.14em];
 }
