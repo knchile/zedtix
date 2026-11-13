@@ -12,16 +12,33 @@ export function EventForm({ uploads }: { uploads: boolean }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
+  /** Shrink big phone photos to max 1600px JPEG so uploads are fast and under the size limit. */
+  async function compress(file: File): Promise<Blob> {
+    const webSafe = ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+    if (webSafe && file.size < 800 * 1024) return file;
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not read that image"))), "image/jpeg", 0.85)
+    );
+  }
+
   async function upload(file: File) {
     setUploadError("");
-    if (file.size > 4 * 1024 * 1024) {
-      setUploadError("Poster must be under 4 MB.");
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Choose an image file (JPG or PNG).");
       return;
     }
     setUploading(true);
     try {
+      const blob = await compress(file);
+      if (blob.size > 4 * 1024 * 1024) throw new Error("That image is too large. Try a smaller one.");
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", blob, blob === file ? file.name : "poster.jpg");
       const r = await fetch("/api/upload", { method: "POST", body: fd });
       const j = (await r.json()) as { url?: string; error?: string };
       if (!r.ok || !j.url) throw new Error(j.error || "Upload failed");
@@ -59,28 +76,50 @@ export function EventForm({ uploads }: { uploads: boolean }) {
           <textarea className="input min-h-32" id="description" name="description" placeholder="Line-up, dress code, what's included…" />
         </div>
         <div>
-          <span className="label">Poster</span>
-          {uploads && (
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
-              className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-night-900 file:px-4 file:py-2.5 file:font-semibold file:text-white"
-            />
+          <span className="label">Event poster</span>
+          {uploads ? (
+            <>
+              <label
+                className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-center transition-colors ${
+                  imageUrl ? "border-green-400 bg-green-50" : "border-zinc-300 bg-zinc-50 hover:border-brand-500 hover:bg-brand-50"
+                }`}
+              >
+                {imageUrl && !uploading ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imageUrl} alt="Poster preview" className="max-h-72 rounded-lg shadow" />
+                ) : (
+                  <span className="text-4xl" aria-hidden="true">🖼️</span>
+                )}
+                <span className="font-bold text-zinc-900">
+                  {uploading ? "Uploading…" : imageUrl ? "Change poster" : "Tap to upload your poster"}
+                </span>
+                <span className="text-sm text-zinc-500">JPG or PNG from your phone or computer</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  disabled={uploading}
+                  onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+                />
+              </label>
+              <input type="hidden" name="imageUrl" value={imageUrl} />
+            </>
+          ) : (
+            <>
+              <input
+                className="input"
+                name="imageUrl"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="Paste a link to the poster image"
+              />
+              {imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={imageUrl} alt="Poster preview" className="mt-3 max-h-60 rounded-lg" />
+              )}
+            </>
           )}
-          <input
-            className="input mt-2"
-            name="imageUrl"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder={uploads ? "…or paste a link to the poster" : "Paste a link to the poster image"}
-          />
-          {uploading && <p className="mt-1 text-sm text-zinc-500">Uploading…</p>}
-          {uploadError && <p className="mt-1 text-sm text-brand-700">{uploadError}</p>}
-          {imageUrl && !uploading && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="Poster preview" className="mt-3 max-h-60 rounded-lg" />
-          )}
+          {uploadError && <p className="mt-2 text-sm font-semibold text-brand-700">{uploadError}</p>}
         </div>
       </section>
 
